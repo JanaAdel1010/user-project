@@ -7,6 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = isset($_POST['email']) ? $_POST['email'] : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
+    $hashed_password=md5($password);
     $conn = new mysqli("localhost", "root","", "registration");
 
     if ($conn->connect_error) {
@@ -19,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         echo "Email already exists. Please choose a different email.";
     } else {
-        $sql = "INSERT INTO user (email, name, password) VALUES ('$email', '$name', '$password')";
+        $sql = "INSERT INTO user (email, name, password) VALUES ('$email', '$name', '$hashed_password')";
         if ($conn->query($sql) === TRUE) {
             echo "Registration successful!";
         } else {
