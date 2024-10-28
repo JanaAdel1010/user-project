@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login and Registration</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #4a4a4a;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form-container {
+            display: none;
+            text-align: left;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #7b7b7b;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .toggle-btns {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .toggle-btns button {
+            background: linear-gradient(45deg, #6a5af9, #ff6a95);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .toggle-btns button:hover {
+            background: linear-gradient(45deg, #ff6a95, #6a5af9);
+        }
+
+        .error {
+            color: #ff6a6a;
+            font-size: 14px;
+        }
+    </style>
+
+    <script>
+        function toggleForm(formId) {
+            document.getElementById('registrationForm').classList.remove('active');
+            document.getElementById('loginForm').classList.remove('active');
+            document.getElementById(formId).classList.add('active');
+        }
+
+        function validateRegistration() {
+            var name = document.getElementById("regName").value;
+            var email = document.getElementById("regEmail").value;
+            var password = document.getElementById("regPassword").value;
+            var confirmPassword = document.getElementById("regConfirmPassword").value;
+
+            if (name === "" || email === "" || password === "" || confirmPassword === "") {
+                alert("All fields must be filled.");
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                return false;
+            }
+
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                alert("Invalid email format.");
+                return false;
+            }
+
+            return true;
+        }
+
+        function validateLogin() {
+            var email = document.getElementById("loginEmail").value;
+            var password = document.getElementById("loginPassword").value;
+
+            if (email === "" || password === "") {
+                alert("Email and Password must be filled.");
+                return false;
+            }
+
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email)) {
+                alert("Invalid email format.");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Welcome!</h2>
+    <div class="toggle-btns">
+        <button onclick="toggleForm('registrationForm')">Register</button>
+        <button onclick="toggleForm('loginForm')">Login</button>
+    </div>
+
+    <div id="registrationForm" class="form-container">
+        <h2>Sign Up</h2>
+        <form action="form.php" method="post" onsubmit="return validateRegistration();">
+            <label for="regName">Name</label>
+            <input type="text" id="regName" name="name" placeholder="Enter your full name">
+
+            <label for="regEmail">Email</label>
+            <input type="email" id="regEmail" name="email" placeholder="Enter your email address">
+
+            <label for="regPassword">Password</label>
+            <input type="password" id="regPassword" name="password" placeholder="Create a password">
+
+            <label for="regConfirmPassword">Confirm Password</label>
+            <input type="password" id="regConfirmPassword" name="confirmPassword" placeholder="Confirm your password">
+
+            <input type="submit" value="Register">
+        </form>
+    </div>
+
+    <div id="loginForm" class="form-container">
+        <h2>Login</h2>
+        <form action="login.php" method="post" onsubmit="return validateLogin();">
+            <label for="loginEmail">Email</label>
+            <input type="email" id="loginEmail" name="email" placeholder="Enter your email address">
+
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" name="password" placeholder="Enter your password">
+
+            <input type="submit" value="Login">
+        </form>
+    </div>
+</div>
+
+<script>
+    toggleForm('registrationForm');
+</script>
+
+</body>
+</html>
