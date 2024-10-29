@@ -82,9 +82,23 @@
             background: linear-gradient(45deg, #ff6a95, #6a5af9);
         }
 
-        .error {
-            color: #ff6a6a;
+        .message {
+            display: none;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #155724;
+            background-color: #d4edda;
+        }
+
+        .error {
+            color: #721c24;
+            background-color: #f8d7da;
         }
     </style>
 
@@ -95,47 +109,54 @@
             document.getElementById(formId).classList.add('active');
         }
 
-        function validateRegistration() {
-            var name = document.getElementById("regName").value;
-            var email = document.getElementById("regEmail").value;
-            var password = document.getElementById("regPassword").value;
-            var confirmPassword = document.getElementById("regConfirmPassword").value;
-
-            if (name === "" || email === "" || password === "" || confirmPassword === "") {
-                alert("All fields must be filled.");
-                return false;
-            }
-
-            if (password !== confirmPassword) {
-                alert("Passwords do not match.");
-                return false;
-            }
-
-            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                alert("Invalid email format.");
-                return false;
-            }
-
-            return true;
+        function displayMessage(message, isSuccess) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+            messageBox.className = isSuccess ? 'message success' : 'message error';
         }
 
-        function validateLogin() {
-            var email = document.getElementById("loginEmail").value;
-            var password = document.getElementById("loginPassword").value;
+        function registerUser(event) {
+            event.preventDefault();
 
-            if (email === "" || password === "") {
-                alert("Email and Password must be filled.");
-                return false;
+            const name = document.getElementById("regName").value;
+            const email = document.getElementById("regEmail").value;
+            const password = document.getElementById("regPassword").value;
+            const confirmPassword = document.getElementById("regConfirmPassword").value;
+
+            if (password !== confirmPassword) {
+                displayMessage("Passwords do not match.", false);
+                return;
             }
 
-            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                alert("Invalid email format.");
-                return false;
-            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "form.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-            return true;
+            xhr.onload = function () {
+                const response = JSON.parse(xhr.responseText);
+                displayMessage(response.message, response.success);
+            };
+
+            xhr.send(`name=${name}&email=${email}&password=${password}`);
+        }
+
+        function loginUser(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("loginEmail").value;
+            const password = document.getElementById("loginPassword").value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "login.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+            xhr.onload = function () {
+                const response = JSON.parse(xhr.responseText);
+                displayMessage(response.message, response.success);
+            };
+
+            xhr.send(`email=${email}&password=${password}`);
         }
     </script>
 </head>
@@ -148,9 +169,11 @@
         <button onclick="toggleForm('loginForm')">Login</button>
     </div>
 
-    <div id="registrationForm" class="form-container">
+    <div id="messageBox" class="message"></div>
+
+    <div id="registrationForm" class="form-container active">
         <h2>Sign Up</h2>
-        <form action="form.php" method="post" onsubmit="return validateRegistration();">
+        <form onsubmit="registerUser(event);">
             <label for="regName">Name</label>
             <input type="text" id="regName" name="name" placeholder="Enter your full name">
 
@@ -169,7 +192,7 @@
 
     <div id="loginForm" class="form-container">
         <h2>Login</h2>
-        <form action="login.php" method="post" onsubmit="return validateLogin();">
+        <form onsubmit="loginUser(event);">
             <label for="loginEmail">Email</label>
             <input type="email" id="loginEmail" name="email" placeholder="Enter your email address">
 
